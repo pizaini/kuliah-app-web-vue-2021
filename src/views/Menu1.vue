@@ -20,8 +20,11 @@
           <div class="card-body">
             <h5 class="card-title">FORM Customer</h5>
             <form class="" @submit.prevent="submitFormCustomer">
-              <div class="position-relative form-group"><label for="nama" class="">Nama</label><input name="nama" id="nama" placeholder="Nama customer" type="text" class="form-control"></div>
-              <div class="position-relative form-group"><label for="email" class="">Email</label><input name="email" id="email" placeholder="Email customer" type="email" class="form-control">
+              <div class="position-relative form-group"><label for="nama" class="">Nama</label>
+                <input name="nama" id="nama" placeholder="Nama customer" type="text" class="form-control" v-model="modelCustomer.nama">
+              </div>
+              <div class="position-relative form-group"><label for="email" class="">Email</label>
+                <input name="email" id="email" placeholder="Email customer" type="email" class="form-control" v-model="modelCustomer.email">
               </div>
               <button class="mt-2 btn btn-primary">Save</button>
             </form>
@@ -60,35 +63,41 @@
 
 <script>
 import axios from "axios";
-//axios.defaults.headers.common["X-Requested-With"]="XMLHttpRequest"
 export default {
   name: "Menu1",
   data(){
     return {
-      dataCustomer: []
+      dataCustomer: [],
+      modelCustomer:{
+        nama: '',
+        email: ''
+      }
     }
   },
   mounted() {
     this.loadData()
   },
-  methods:{
-    loadData(){
+  methods: {
+    loadData() {
       axios.get("http://pabw-api.tif.localhost/customer")
           .then(response => {
-            console.log(response);
+            this.dataCustomer = response.data
           }).catch(error => {
-            console.log(error)
-      }).finally({
-
-      })
+        console.log(error)
+      }).finally({})
     },
     submitFormCustomer(){
-      const article = { title: "Vue POST Request Example" };
-      axios.post("http://pabw-api.tif.localhost/customer/save", article)
-          .then(response => {
-            console.log(response)
-      }).catch(error => {
-        console.log(error)
+      const dataPayload = {
+        nama: this.modelCustomer.nama,
+        email: this.modelCustomer.email
+      }
+      axios.post('http://pabw-api.tif.localhost/customer/save', dataPayload)
+        .then(response => {
+          this.dataCustomer.push(response.data);
+          this.modelCustomer.email = '';
+          this.modelCustomer.nama = '';
+        }).catch(error => {
+          console.log(error)
       }).finally({
 
       })
